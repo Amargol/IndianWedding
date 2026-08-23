@@ -15,6 +15,7 @@ import { nitishAndVaishnaviWedding } from "./exampleSchemas/nitishAndVaishnaviWe
 import { pranayAndSuhaniWedding } from "./exampleSchemas/pranayAndSuhaniWedding";
 import { rachelAndSeanWedding } from "./exampleSchemas/rachelAndSeanWedding";
 import { sushanAndSanahWedding } from "./exampleSchemas/sushanAndSanahWedding";
+import { tejasAndPoojaWedding } from "./exampleSchemas/tejasAndPoojaWedding";
 import { trishaAndAkhileshWedding } from "./exampleSchemas/trishaAndAkhileshWedding";
 import type { WeddingWebsite } from "./types/WeddingSchema";
 
@@ -37,4 +38,5 @@ export const weddingExamples: WeddingWebsite[] = [
     pranayAndSuhaniWedding,
     karunaAndAkashWedding,
     arpitaAndVishalWedding,
+    tejasAndPoojaWedding,
 ];
