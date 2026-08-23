@@ -1,6 +1,7 @@
 import { aishaAndJivWedding } from "./exampleSchemas/aishaAndJivWedding";
 import { aparnaAndAnirudhWedding } from "./exampleSchemas/aparnaAndAnirudhWedding";
 import { anumehaAndShikharWedding } from "./exampleSchemas/anumehaAndShikharWedding";
+import { amritaAndJoshuaWedding } from "./exampleSchemas/amritaAndJoshuaWedding";
 import { koshaAndMarutWedding } from "./exampleSchemas/koshaAndMarutWedding";
 import { rachelAndSeanWedding } from "./exampleSchemas/rachelAndSeanWedding";
 import { trishaAndAkhileshWedding } from "./exampleSchemas/trishaAndAkhileshWedding";
@@ -13,4 +14,5 @@ export const weddingExamples: WeddingWebsite[] = [
     aparnaAndAnirudhWedding,
     rachelAndSeanWedding,
     anumehaAndShikharWedding,
+    amritaAndJoshuaWedding,
 ];
