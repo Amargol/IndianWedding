@@ -4,6 +4,7 @@ import { aparnaAndAnirudhWedding } from "./exampleSchemas/aparnaAndAnirudhWeddin
 import { arpitaAndVishalWedding } from "./exampleSchemas/arpitaAndVishalWedding";
 import { anumehaAndShikharWedding } from "./exampleSchemas/anumehaAndShikharWedding";
 import { amritaAndJoshuaWedding } from "./exampleSchemas/amritaAndJoshuaWedding";
+import { bhagathAndMadhuWedding } from "./exampleSchemas/bhagathAndMadhuWedding";
 import { dipikaAndJatinWedding } from "./exampleSchemas/dipikaAndJatinWedding";
 import { ginalAndZeelWedding } from "./exampleSchemas/ginalAndZeelWedding";
 import { karunaAndAkashWedding } from "./exampleSchemas/karunaAndAkashWedding";
@@ -39,4 +40,5 @@ export const weddingExamples: WeddingWebsite[] = [
     karunaAndAkashWedding,
     arpitaAndVishalWedding,
     tejasAndPoojaWedding,
+    bhagathAndMadhuWedding,
 ];
