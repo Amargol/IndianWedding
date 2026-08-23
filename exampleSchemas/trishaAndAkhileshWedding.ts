@@ -1,5 +1,7 @@
 // Trisha & Akhilesh - https://www.zola.com/wedding/trishaandakhilesh - Zola
 
+import type { WeddingWebsite } from "../types/WeddingSchema";
+
 export const trishaAndAkhileshWedding: WeddingWebsite = {
   id: "trisha-and-akhilesh",
 
