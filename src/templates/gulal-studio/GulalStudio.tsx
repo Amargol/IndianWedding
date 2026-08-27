@@ -9,6 +9,7 @@ import type {
   WeddingInformation,
 } from "../../../types/WeddingSchema";
 import type { TemplateProps, WeddingPage } from "../../types";
+import { templatePath } from "../../routes";
 import "./gulal-studio.css";
 
 const FALLBACK_IMAGES: WeddingImage[] = [
@@ -119,7 +120,7 @@ function titleCase(value?: string) {
 }
 
 function pathFor(weddingId: string, page: WeddingPage) {
-  return `/templates/gulal-studio/${encodeURIComponent(weddingId)}/${page}`;
+  return templatePath("gulal-studio", weddingId, page);
 }
 
 type PreparedImage = WeddingImage & { url: string };

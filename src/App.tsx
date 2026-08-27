@@ -5,6 +5,7 @@ import type { TemplateDefinition, WeddingPage } from "./types";
 import MoonlitCinema from "./templates/moonlit-cinema/MoonlitCinema";
 import GulalStudio from "./templates/gulal-studio/GulalStudio";
 import VowLedger from "./templates/vow-ledger/VowLedger";
+import { appPath, routePath, templatePath } from "./routes";
 import "./styles/browser.css";
 
 const templates: TemplateDefinition[] = [
@@ -39,7 +40,7 @@ type Route =
   | { type: "not-found" };
 
 function parseRoute(pathname: string): Route {
-  const segments = pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  const segments = routePath(pathname).split("/").filter(Boolean).map(decodeURIComponent);
   if (!segments.length) return { type: "browser" };
   if (segments[0] === "templates" && (segments.length === 3 || segments.length === 4)) {
     const page = segments[3] ?? "home";
@@ -109,7 +110,7 @@ function BrowserPage() {
               >
                 <div className="template-examples__grid">
                   {weddingExamples.map((wedding) => (
-                    <a href={`/templates/${template.slug}/${wedding.id}/home`} key={wedding.id}>
+                    <a href={templatePath(template.slug, wedding.id, "home")} key={wedding.id}>
                       <span>{coupleLabel(wedding)}</span>
                     </a>
                   ))}
@@ -144,7 +145,7 @@ function TemplatePage({
 
   return (
     <>
-      <a className="studio-return" href="/" aria-label="Return to all templates">
+      <a className="studio-return" href={appPath()} aria-label="Return to all templates">
         <span aria-hidden="true">←</span> All templates
       </a>
       <Template wedding={wedding} page={page} />
@@ -157,7 +158,7 @@ function NotFound() {
     <main className="browser-not-found">
       <p>This invitation could not be found.</p>
       <h1>The celebration is elsewhere.</h1>
-      <a href="/">Return to all templates</a>
+      <a href={appPath()}>Return to all templates</a>
     </main>
   );
 }

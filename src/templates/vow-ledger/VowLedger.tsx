@@ -9,6 +9,7 @@ import type {
   WeddingInformation,
 } from "../../../types/WeddingSchema";
 import type { TemplateProps, WeddingPage } from "../../types";
+import { templatePath } from "../../routes";
 import "./vow-ledger.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -202,8 +203,8 @@ export default function VowLedger({ wedding, page }: TemplateProps) {
   const partnerOne = clean(wedding.couple?.partnerOne) || "One";
   const partnerTwo = clean(wedding.couple?.partnerTwo) || "Another";
   const coupleName = `${partnerOne} & ${partnerTwo}`;
-  const weddingId = encodeURIComponent(clean(wedding.id) || "celebration");
-  const basePath = `/templates/vow-ledger/${weddingId}`;
+  const weddingId = clean(wedding.id) || "celebration";
+  const basePath = templatePath("vow-ledger", weddingId);
   const location = clean(wedding.couple?.location) || "A place close to our hearts";
   const siteTitle = clean(wedding.settings?.title) || coupleName;
 

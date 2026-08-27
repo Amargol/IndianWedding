@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { WeddingImage, WeddingInformation } from "../../../types/WeddingSchema";
 import type { TemplateProps, WeddingPage } from "../../types";
+import { templatePath } from "../../routes";
 import "./moonlit-cinema.css";
 
 const pages: { key: WeddingPage; label: string }[] = [
@@ -187,7 +188,7 @@ export default function MoonlitCinema({ wedding, page }: TemplateProps) {
   const location = text(wedding.couple?.location, "A place close to our hearts");
   const currentPage = pages.some((item) => item.key === page) ? page : "home";
   const routeFor = (target: WeddingPage) =>
-    `/templates/moonlit-cinema/${encodeURIComponent(wedding.id)}/${target}`;
+    templatePath("moonlit-cinema", wedding.id, target);
 
   const images = useMemo(
     () =>
