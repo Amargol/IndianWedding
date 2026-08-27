@@ -18,6 +18,5 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["src", "types", "exampleSchemas", "index.ts"],
-  "exclude": ["src/templates/royal-jharokha"]
+  "include": ["src", "types", "exampleSchemas", "index.ts"]
 }

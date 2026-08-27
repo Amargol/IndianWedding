@@ -2,6 +2,8 @@ import { mkdir } from "node:fs/promises";
 import { chromium, webkit } from "playwright";
 
 const baseUrl = process.env.WEDDING_STUDIO_URL ?? "http://127.0.0.1:5173";
+const pageNames = ["home", "story", "events", "details", "gallery"];
+const captureScreenshots = process.env.WEDDING_AUDIT_SCREENSHOTS !== "0";
 const outputDirectory = "/tmp/indian-wedding-visual-audit";
 await mkdir(outputDirectory, { recursive: true });
 
@@ -39,8 +41,10 @@ const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 }, 
 watch(desktop, "desktop");
 await desktop.goto(baseUrl, { waitUntil: "domcontentloaded" });
 await desktop.waitForSelector(".template-row");
-await desktop.waitForTimeout(1800);
-await desktop.screenshot({ path: `${outputDirectory}/landing-desktop.png` });
+if (captureScreenshots) {
+  await desktop.waitForTimeout(1800);
+  await desktop.screenshot({ path: `${outputDirectory}/landing-desktop.png` });
+}
 
 const landing = await desktop.evaluate(() => {
   const links = Array.from(document.querySelectorAll('a[href^="/templates/"]'));
@@ -56,19 +60,30 @@ const landing = await desktop.evaluate(() => {
 });
 
 await desktop.locator(".template-row").first().scrollIntoViewIfNeeded();
-await desktop.waitForTimeout(600);
-await desktop.screenshot({ path: `${outputDirectory}/landing-collection.png` });
+if (captureScreenshots) {
+  await desktop.waitForTimeout(600);
+  await desktop.screenshot({ path: `${outputDirectory}/landing-collection.png` });
+}
 
 const desktopReports = [];
+const multipageLinkCounts = [];
 for (const [index, route] of landing.featuredRoutes.entries()) {
   await desktop.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
   await desktop.waitForSelector("main");
-  await desktop.waitForTimeout(1800);
+  await desktop.waitForTimeout(captureScreenshots ? 1800 : 80);
   desktopReports.push({ route, ...(await metrics(desktop)) });
-  await desktop.screenshot({ path: `${outputDirectory}/template-${index + 1}-desktop.png` });
-  await desktop.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight * 0.48));
-  await desktop.waitForTimeout(800);
-  await desktop.screenshot({ path: `${outputDirectory}/template-${index + 1}-mid.png` });
+  multipageLinkCounts.push({
+    route,
+    links: await desktop.locator('nav a[href^="/templates/"]').evaluateAll((links) =>
+      new Set(links.map((link) => link.getAttribute("href"))).size,
+    ),
+  });
+  if (captureScreenshots) {
+    await desktop.screenshot({ path: `${outputDirectory}/template-${index + 1}-desktop.png` });
+    await desktop.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight * 0.48));
+    await desktop.waitForTimeout(800);
+    await desktop.screenshot({ path: `${outputDirectory}/template-${index + 1}-mid.png` });
+  }
 }
 
 const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
@@ -77,23 +92,35 @@ const mobileReports = [];
 for (const [index, route] of landing.featuredRoutes.entries()) {
   await mobile.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
   await mobile.waitForSelector("main");
-  await mobile.waitForTimeout(1400);
+  await mobile.waitForTimeout(captureScreenshots ? 1400 : 80);
   mobileReports.push({ route, ...(await metrics(mobile)) });
-  await mobile.screenshot({ path: `${outputDirectory}/template-${index + 1}-mobile.png` });
+  if (captureScreenshots) {
+    await mobile.screenshot({ path: `${outputDirectory}/template-${index + 1}-mobile.png` });
+  }
 }
 
 const sweep = await browser.newPage({ viewport: { width: 1024, height: 768 } });
 watch(sweep, "schema-sweep");
-await sweep.route(/\.(?:avif|gif|jpe?g|png|webp)(?:\?.*)?$/i, (route) => route.abort());
+await sweep.route("**/*", (route) =>
+  route.request().url().startsWith(baseUrl) ? route.continue() : route.abort(),
+);
 const failedRoutes = [];
-for (const route of landing.routes) {
-  const response = await sweep.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
-  await sweep.waitForTimeout(35);
+const multipageRoutes = landing.routes.flatMap((route) => {
+  const base = route.replace(/\/home$/, "");
+  return pageNames.map((page) => `${base}/${page}`);
+});
+await sweep.goto(baseUrl, { waitUntil: "domcontentloaded" });
+for (const route of multipageRoutes) {
+  await sweep.evaluate((pathname) => {
+    window.history.pushState({}, "", pathname);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }, route);
+  await sweep.waitForTimeout(20);
   const state = await sweep.evaluate(() => ({
     hasMain: Boolean(document.querySelector("main")),
     textLength: document.body.innerText.trim().length,
   }));
-  if (!response?.ok() || !state.hasMain || state.textLength < 80) failedRoutes.push(route);
+  if (!state.hasMain || state.textLength < 80) failedRoutes.push(route);
 }
 
 await browser.close();
@@ -101,6 +128,7 @@ await browser.close();
 const report = {
   outputDirectory,
   landing,
+  multipageLinkCounts,
   desktop: desktopReports,
   mobile: mobileReports,
   failedRoutes,
@@ -109,8 +137,10 @@ const report = {
 
 console.log(JSON.stringify(report, null, 2));
 if (
-  landing.templateCount !== 5 ||
-  landing.routes.length !== 100 ||
+  landing.templateCount !== 3 ||
+  landing.routes.length !== 60 ||
+  multipageRoutes.length !== 300 ||
+  multipageLinkCounts.some((entry) => entry.links < 5) ||
   failedRoutes.length ||
   report.errors.length ||
   [...desktopReports, ...mobileReports].some((entry) => entry.horizontalOverflow > 1 || !entry.hasMain)
