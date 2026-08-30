@@ -12,7 +12,9 @@ try {
   const { weddingExamples } = await vite.ssrLoadModule("/index.ts");
   const templateSpecs = await Promise.all(
     [
-      ["saanjh-editorial", "/src/templates/saanjh-editorial/SaanjhEditorial.tsx"],
+      ["moonlit-cinema", "/src/templates/moonlit-cinema/MoonlitCinema.tsx"],
+      ["gulal-studio", "/src/templates/gulal-studio/GulalStudio.tsx"],
+      ["vow-ledger", "/src/templates/vow-ledger/VowLedger.tsx"],
     ].map(async ([slug, modulePath]) => ({
       slug,
       Template: (await vite.ssrLoadModule(modulePath)).default,
@@ -63,7 +65,7 @@ try {
     ),
   );
 
-  if (templateSpecs.length !== 1 || weddingExamples.length !== 20 || combinations !== 100 || failures.length) {
+  if (templateSpecs.length !== 3 || weddingExamples.length !== 20 || combinations !== 300 || failures.length) {
     process.exitCode = 1;
   }
 } finally {
