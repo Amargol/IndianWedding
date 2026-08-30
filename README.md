@@ -1,6 +1,22 @@
-# Indian Wedding Template Studio
+# Indian Wedding Website Studio
 
-A Vite and React collection of multi-page Indian wedding website templates.
+A schema-driven Vite and React studio for multi-page Indian wedding websites.
+
+The product intentionally uses one strong layout: **Saanjh Editorial**. Visual
+variety comes from independent style layers rather than separate templates:
+
+- palette;
+- background surface;
+- typography;
+- image treatment; and
+- ambient motion effects.
+
+Every example in `exampleSchemas/` uses the same five-page information
+architecture. This keeps complex wedding content predictable while each couple
+still gets a distinct visual identity.
+
+See [PARTIFUL_UX.md](./PARTIFUL_UX.md) for the product rationale and the mapping
+between Partiful's customization model and this wedding-focused system.
 
 ## Local development
 

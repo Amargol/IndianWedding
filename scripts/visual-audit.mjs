@@ -40,7 +40,7 @@ async function metrics(page) {
 const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
 watch(desktop, "desktop");
 await desktop.goto(baseUrl, { waitUntil: "domcontentloaded" });
-await desktop.waitForSelector(".template-row");
+await desktop.waitForSelector(".template-showcase");
 if (captureScreenshots) {
   await desktop.waitForTimeout(1800);
   await desktop.screenshot({ path: `${outputDirectory}/landing-desktop.png` });
@@ -48,18 +48,18 @@ if (captureScreenshots) {
 
 const landing = await desktop.evaluate(() => {
   const links = Array.from(document.querySelectorAll('a[href^="/templates/"]'));
-  const featuredRoutes = Array.from(document.querySelectorAll(".template-row")).map(
-    (row) => row.querySelector('a[href^="/templates/"]')?.getAttribute("href"),
+  const featuredRoutes = Array.from(document.querySelectorAll(".template-summary")).map(
+    (summary) => summary.querySelector('a[href^="/templates/"]')?.getAttribute("href"),
   );
   return {
-    templateCount: document.querySelectorAll(".template-row").length,
+    templateCount: document.querySelectorAll(".template-showcase").length,
     schemaLinkCount: links.length,
     routes: [...new Set(links.map((link) => link.getAttribute("href")).filter(Boolean))],
     featuredRoutes: featuredRoutes.filter(Boolean),
   };
 });
 
-await desktop.locator(".template-row").first().scrollIntoViewIfNeeded();
+await desktop.locator(".template-showcase").first().scrollIntoViewIfNeeded();
 if (captureScreenshots) {
   await desktop.waitForTimeout(600);
   await desktop.screenshot({ path: `${outputDirectory}/landing-collection.png` });
@@ -137,9 +137,9 @@ const report = {
 
 console.log(JSON.stringify(report, null, 2));
 if (
-  landing.templateCount !== 3 ||
-  landing.routes.length !== 60 ||
-  multipageRoutes.length !== 300 ||
+  landing.templateCount !== 1 ||
+  landing.routes.length !== 20 ||
+  multipageRoutes.length !== 100 ||
   multipageLinkCounts.some((entry) => entry.links < 5) ||
   failedRoutes.length ||
   report.errors.length ||
