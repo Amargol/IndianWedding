@@ -2,33 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import { weddingExamples } from "../index";
 import type { WeddingWebsite } from "../types/WeddingSchema";
 import type { TemplateDefinition, WeddingPage } from "./types";
-import MoonlitCinema from "./templates/moonlit-cinema/MoonlitCinema";
-import GulalStudio from "./templates/gulal-studio/GulalStudio";
-import VowLedger from "./templates/vow-ledger/VowLedger";
+import SaanjhEditorial from "./templates/saanjh-editorial/SaanjhEditorial";
+import { styleForWedding } from "./templates/saanjh-editorial/style-presets";
 import { appPath, routePath, templatePath } from "./routes";
 import "./styles/browser.css";
 
 const templates: TemplateDefinition[] = [
   {
-    slug: "moonlit-cinema",
-    name: "Moonlit Cinema",
+    slug: "saanjh-editorial",
+    name: "Saanjh Editorial",
     description:
-      "Best for evening weddings, formal receptions, and couples who want a dramatic, cinematic invitation.",
-    component: MoonlitCinema,
-  },
-  {
-    slug: "gulal-studio",
-    name: "Gulal Studio",
-    description:
-      "Best for colourful Indian wedding celebrations shaped by marigolds, mehndi tones, layered portraiture, and joyful ritual.",
-    component: GulalStudio,
-  },
-  {
-    slug: "vow-ledger",
-    name: "Vow Ledger",
-    description:
-      "Best for classic ceremonies and destination weekends that need a calm, editorial guide to every detail.",
-    component: VowLedger,
+      "A refined, image-led Indian wedding experience that turns every event, story, and guest detail into one cohesive editorial celebration.",
+    component: SaanjhEditorial,
   },
 ];
 
@@ -61,22 +46,24 @@ function coupleLabel(wedding: WeddingWebsite) {
 }
 
 function BrowserPage() {
+  const template = templates[0];
   return (
     <main className="template-browser" id="top">
       <header className="browser-header">
         <a className="browser-brand" href="#top" aria-label="Vivaah home">
-          Vivaah
+          <span>V</span> Vivaah
         </a>
 
         <div className="browser-heading">
-          <h1>Wedding website templates</h1>
-          <p>Compare each design, then open it with any couple to preview the complete five-page website.</p>
+          <p className="browser-eyebrow">One considered foundation</p>
+          <h1>One exceptional template.<br />Every wedding becomes its own.</h1>
+          <p>Saanjh Editorial is built directly from the wedding schema, adapting its five pages to each couple’s events, imagery, story, and guest information.</p>
         </div>
 
         <dl className="browser-facts" aria-label="Collection summary">
           <div>
-            <dt>Templates</dt>
-            <dd>{templates.length}</dd>
+            <dt>Template</dt>
+            <dd>01</dd>
           </div>
           <div>
             <dt>Weddings</dt>
@@ -89,36 +76,38 @@ function BrowserPage() {
         </dl>
       </header>
 
-      <section className="template-list" aria-label="Template collection">
-        {templates.map((template) => (
-          <article className="template-row" key={template.slug}>
-            <div className="template-summary">
-              <h2>{template.name}</h2>
-              <p>{template.description}</p>
-            </div>
+      <section className="template-showcase" aria-label="Saanjh Editorial examples">
+        <div className="template-summary">
+          <p>THE TEMPLATE · 01</p>
+          <h2>{template.name}</h2>
+          <p>{template.description}</p>
+          <a href={templatePath(template.slug, weddingExamples[0].id, "home")}>Open featured wedding <span>↗</span></a>
+        </div>
 
-            <div className="template-examples">
-              <div className="template-examples__heading">
-                <h3>Preview with a couple</h3>
-                <span>{weddingExamples.length} examples, scroll horizontally</span>
-              </div>
-              <div
-                className="template-examples__scroller"
-                role="region"
-                aria-label={`Wedding examples for ${template.name}`}
-                tabIndex={0}
+        <div className="template-examples">
+          <div className="template-examples__heading">
+            <h3>Choose a wedding</h3>
+            <span>{weddingExamples.length} schema-driven examples</span>
+          </div>
+          <div className="template-examples__grid">
+            {weddingExamples.map((wedding, index) => (
+              <a
+                href={templatePath(template.slug, wedding.id, "home")}
+                key={wedding.id}
+                style={{
+                  "--example-primary": styleForWedding(wedding).primary,
+                  "--example-accent": styleForWedding(wedding).accent,
+                } as React.CSSProperties}
               >
-                <div className="template-examples__grid">
-                  {weddingExamples.map((wedding) => (
-                    <a href={templatePath(template.slug, wedding.id, "home")} key={wedding.id}>
-                      <span>{coupleLabel(wedding)}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </article>
-        ))}
+                <span className="example-number">{String(index + 1).padStart(2, "0")}</span>
+                <span className="example-couple">{coupleLabel(wedding)}</span>
+                <small>{wedding.couple.location ?? "Wedding celebration"}</small>
+                <span className="example-style"><i /><i />{styleForWedding(wedding).name}</span>
+                <b>↗</b>
+              </a>
+            ))}
+          </div>
+        </div>
       </section>
     </main>
   );
@@ -145,8 +134,8 @@ function TemplatePage({
 
   return (
     <>
-      <a className="studio-return" href={appPath()} aria-label="Return to all templates">
-        <span aria-hidden="true">←</span> All templates
+      <a className="studio-return" href={appPath()} aria-label="Return to all wedding examples">
+        <span aria-hidden="true">←</span> All weddings
       </a>
       <Template wedding={wedding} page={page} />
     </>
